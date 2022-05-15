@@ -1,24 +1,41 @@
+import React from "react";
+import { ActivityIndicator } from "react-native";
+import { ThemeProvider } from "styled-components/native";
 
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Welcome from './src/Components/Welcome';
+import {
+  useFonts,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_700Bold,
+} from "@expo-google-fonts/poppins";
+
+import theme from "./src/global/styles/theme";
+import Dashboard from "./src/screens/Dashboard/Dashboard";
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Poppins_700Bold,
+    Poppins_500Medium,
+    Poppins_400Regular,
+  });
+
+  if (!fontsLoaded) {
+    return (
+      <ActivityIndicator
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          flex: 1,
+        }}
+        color={theme.colors.secondary}
+        size="large"
+      />
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-      <Welcome title="Hello World" />
-    </View>
+    <ThemeProvider theme={theme}>
+      <Dashboard />
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
