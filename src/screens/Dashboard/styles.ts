@@ -3,8 +3,7 @@ import { Feather } from "@expo/vector-icons";
 
 import styled from 'styled-components/native'
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
-import { FlatList } from 'react-native';
-import { ITransaction } from './Dashboard';
+import { BorderlessButton, BorderlessButtonProps } from 'react-native-gesture-handler';
 
 export const Container = styled.View`
   flex: 1;
@@ -80,3 +79,5 @@ export const Title = styled.Text`
   font-family: ${({theme }) => theme.fonts.regular};
   color: ${({ theme }) => theme.colors.title};
 `;
+
+export const LogoutButton = styled(BorderlessButton)<BorderlessButtonProps>``;

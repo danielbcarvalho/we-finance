@@ -1,7 +1,8 @@
-import { TouchableOpacity } from "react-native";
+import { RectButton } from "react-native-gesture-handler";
 import styled from "styled-components/native";
+import { IButton } from "./Button";
 
-export const Container = styled(TouchableOpacity)`
+export const Container = styled(RectButton)<IButton>`
   margin: 20px;
   background-color: ${({ theme }) => theme.colors.secondary};
   border-radius: 7px;

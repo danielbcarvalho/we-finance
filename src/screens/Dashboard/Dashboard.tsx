@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, ListRenderItem } from 'react-native'
+import { FlatList } from "react-native";
 
 import HightLightCard from "../../components/HightLightCard/HightLightCard";
 import TransactionCard from "../../components/TransactionCard/TransactionCard";
@@ -8,20 +8,20 @@ import * as S from "./styles";
 
 export interface ITransaction {
   id: string;
-  type: "positive" | "negative",
-  amount: string,
+  type: "positive" | "negative";
+  amount: string;
   category: {
-    name: string,
-    icon: string,
-  },
-  title: string,
-  date: string,
+    name: string;
+    icon: string;
+  };
+  title: string;
+  date: string;
 }
 
 export default function Dashboard() {
-  const data: ITransaction[]= [
+  const data: ITransaction[] = [
     {
-      id: '1',
+      id: "1",
       type: "positive",
       amount: "R$ 500,00",
       category: {
@@ -32,7 +32,7 @@ export default function Dashboard() {
       date: "01/01/2022",
     },
     {
-      id: '2',
+      id: "2",
       type: "negative",
       amount: "R$ 123,00",
       category: {
@@ -43,7 +43,7 @@ export default function Dashboard() {
       date: "01/01/2022",
     },
     {
-      id: '3',
+      id: "3",
       type: "positive",
       amount: "R$ 3435,00",
       category: {
@@ -68,7 +68,9 @@ export default function Dashboard() {
               <S.UserName>Daniel</S.UserName>
             </S.User>
           </S.UserInfo>
-          <S.Icon name="power" />
+          <S.LogoutButton onPress={() => console.log('teste')}>
+            <S.Icon name="power" />
+          </S.LogoutButton>
         </S.UserWrapper>
       </S.Header>
       <S.HightLightCards>
@@ -95,11 +97,11 @@ export default function Dashboard() {
         <S.Title>Listagem</S.Title>
         <FlatList
           data={data}
-          keyExtractor={( item ) => item.id}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => <TransactionCard data={item} />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingBottom: 30
+            paddingBottom: 30,
           }}
         />
       </S.Transactions>
