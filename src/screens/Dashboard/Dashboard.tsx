@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { FlatList } from "react-native";
 
@@ -9,51 +10,54 @@ import * as S from "./styles";
 export interface ITransaction {
   id: string;
   type: "positive" | "negative";
+  name: string;
   amount: string;
-  category: {
-    name: string;
-    icon: string;
-  };
+  category: string;
   title: string;
-  date: string;
+  data: string;
 }
 
 export default function Dashboard() {
-  const data: ITransaction[] = [
-    {
-      id: "1",
-      type: "positive",
-      amount: "R$ 500,00",
-      category: {
-        name: "vendas",
-        icon: "dollar-sign",
-      },
-      title: "Desenvolvimento de site",
-      date: "01/01/2022",
-    },
-    {
-      id: "2",
-      type: "negative",
-      amount: "R$ 123,00",
-      category: {
-        name: "vendas",
-        icon: "coffee",
-      },
-      title: "Cachaça",
-      date: "01/01/2022",
-    },
-    {
-      id: "3",
-      type: "positive",
-      amount: "R$ 3435,00",
-      category: {
-        name: "emprego",
-        icon: "dollar-sign",
-      },
-      title: "Salário",
-      date: "01/01/2022",
-    },
-  ];
+  const [transactionList, setTransactionList] = React.useState<ITransaction[]>([])
+
+  React.useEffect(() => {
+    async function loadData() {
+      const dataKey = '@weFinance:transactions'
+      // await AsyncStorage.removeItem(dataKey)
+      const data = await AsyncStorage.getItem(dataKey)
+
+      const transactions = data ? JSON.parse(data) : []
+      
+      const formatterdTransactions: ITransaction[] = transactions.map((transaction: ITransaction) => {
+        console.log("🚀 ~ file: Dashboard.tsx ~ line 54 ~ constformatterdTransactions:ITransaction[]=transactions.map ~ transaction", transaction)
+        const amount = Number(transaction.amount).toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        })
+
+        const date = Intl.DateTimeFormat('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: '2-digit',
+        }).format(new Date(transaction.data))
+
+        return { 
+          id: transaction.id,
+          name: transaction.name,
+          amount,
+          date,
+          type: transaction.type,
+          category: transaction.category,
+        }
+
+
+      })
+
+      setTransactionList(formatterdTransactions)
+    }
+  
+    loadData()
+  }, [])
 
   return (
     <S.Container>
@@ -68,9 +72,9 @@ export default function Dashboard() {
               <S.UserName>Daniel</S.UserName>
             </S.User>
           </S.UserInfo>
-          <S.LogoutButton onPress={() => console.log('teste')}>
+          {/* <S.LogoutButton onPress={() => console.log('teste')}>
             <S.Icon name="power" />
-          </S.LogoutButton>
+          </S.LogoutButton> */}
         </S.UserWrapper>
       </S.Header>
       <S.HightLightCards>
@@ -96,7 +100,7 @@ export default function Dashboard() {
       <S.Transactions>
         <S.Title>Listagem</S.Title>
         <FlatList
-          data={data}
+          data={transactionList}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <TransactionCard data={item} />}
           showsVerticalScrollIndicator={false}

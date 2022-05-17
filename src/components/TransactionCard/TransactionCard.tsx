@@ -1,26 +1,23 @@
 import React from "react";
+import { categories } from "../../utils/categories";
 
 import * as S from "./styles";
-
-interface ICategory {
-  name: string;
-  icon: string;
-}
 
 interface ITransactionCard {
   data: {
     type: "positive" | "negative";
     date: string;
-    title: string;
+    name: string;
     amount: string;
-    category: ICategory;
+    category: string;
   };
 }
 
 export default function TransactionCard({ data }: ITransactionCard) {
+  const category = categories.filter(item => item.key === data.category)[0]
   return (
     <S.Container>
-      <S.Title>{data.title}</S.Title>
+      <S.Title>{data.name}</S.Title>
       <S.Amount type={data.type}>
         {data.type === "negative" && "- "}
         {data.amount}
@@ -28,8 +25,8 @@ export default function TransactionCard({ data }: ITransactionCard) {
 
       <S.Footer>
         <S.Category>
-          <S.Icon name={data.category.icon} type={data.category} />
-          <S.CategoryName>{data.category.name}</S.CategoryName>
+          <S.Icon name={category?.icon} type={category?.key} />
+          <S.CategoryName>{category?.name}</S.CategoryName>
         </S.Category>
         <S.Title>{data.date}</S.Title>
       </S.Footer>
