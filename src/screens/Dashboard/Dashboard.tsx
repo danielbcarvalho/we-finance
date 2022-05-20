@@ -31,10 +31,6 @@ export default function Dashboard() {
 
     const formatterdTransactions: ITransaction[] = transactions.map(
       (transaction: ITransaction) => {
-        console.log(
-          "🚀 ~ file: Dashboard.tsx ~ line 54 ~ constformatterdTransactions:ITransaction[]=transactions.map ~ transaction",
-          transaction
-        );
         const amount = Number(transaction.amount).toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
