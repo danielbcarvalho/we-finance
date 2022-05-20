@@ -62,7 +62,7 @@ export default function Register() {
     setTransactionType('')
   }
 
-  function handleChangeTransactionType(type: "up" | "down") {
+  function handleChangeTransactionType(type: "positive" | "negative") {
     setTransactionType(type);
   }
 
@@ -132,16 +132,16 @@ export default function Register() {
 
           <S.TransactionTypesWrapper>
             <TransactionTypeButton
-              onPress={() => handleChangeTransactionType("up")}
+              onPress={() => handleChangeTransactionType("positive")}
               title="Income"
               type="up"
-              isActive={transactionType === "up"}
+              isActive={transactionType === "positive"}
             />
             <TransactionTypeButton
-              onPress={() => handleChangeTransactionType("down")}
+              onPress={() => handleChangeTransactionType("negative")}
               title="Outcome"
               type="down"
-              isActive={transactionType === "down"}
+              isActive={transactionType === "negative"}
             />
           </S.TransactionTypesWrapper>
           <CategorySelectButton

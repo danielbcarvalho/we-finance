@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 import { FlatList } from "react-native";
 
@@ -18,46 +19,53 @@ export interface ITransaction {
 }
 
 export default function Dashboard() {
-  const [transactionList, setTransactionList] = React.useState<ITransaction[]>([])
+  const [transactionList, setTransactionList] = React.useState<ITransaction[]>(
+    []
+  );
+  async function loadData() {
+    const dataKey = "@weFinance:transactions";
+    // await AsyncStorage.removeItem(dataKey)
+    const data = await AsyncStorage.getItem(dataKey);
 
-  React.useEffect(() => {
-    async function loadData() {
-      const dataKey = '@weFinance:transactions'
-      // await AsyncStorage.removeItem(dataKey)
-      const data = await AsyncStorage.getItem(dataKey)
+    const transactions = data ? JSON.parse(data) : [];
 
-      const transactions = data ? JSON.parse(data) : []
-      
-      const formatterdTransactions: ITransaction[] = transactions.map((transaction: ITransaction) => {
-        console.log("🚀 ~ file: Dashboard.tsx ~ line 54 ~ constformatterdTransactions:ITransaction[]=transactions.map ~ transaction", transaction)
-        const amount = Number(transaction.amount).toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
-        })
+    const formatterdTransactions: ITransaction[] = transactions.map(
+      (transaction: ITransaction) => {
+        console.log(
+          "🚀 ~ file: Dashboard.tsx ~ line 54 ~ constformatterdTransactions:ITransaction[]=transactions.map ~ transaction",
+          transaction
+        );
+        const amount = Number(transaction.amount).toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
 
-        const date = Intl.DateTimeFormat('pt-BR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: '2-digit',
-        }).format(new Date(transaction.data))
+        const date = Intl.DateTimeFormat("pt-BR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        }).format(new Date(transaction.data));
 
-        return { 
+        return {
           id: transaction.id,
           name: transaction.name,
           amount,
           date,
           type: transaction.type,
           category: transaction.category,
-        }
+        };
+      }
+    );
 
+    setTransactionList(formatterdTransactions);
+  }
+  React.useEffect(() => {
+    loadData();
+  }, []);
 
-      })
-
-      setTransactionList(formatterdTransactions)
-    }
-  
+  useFocusEffect(React.useCallback(() => {
     loadData()
-  }, [])
+  },[]))
 
   return (
     <S.Container>
@@ -72,9 +80,9 @@ export default function Dashboard() {
               <S.UserName>Daniel</S.UserName>
             </S.User>
           </S.UserInfo>
-          {/* <S.LogoutButton onPress={() => console.log('teste')}>
+          <S.LogoutButton onPress={() => console.log('teste')}>
             <S.Icon name="power" />
-          </S.LogoutButton> */}
+          </S.LogoutButton>
         </S.UserWrapper>
       </S.Header>
       <S.HightLightCards>
