@@ -1,12 +1,15 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { VictoryPie } from "victory-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 import { HistoryCard } from "../../components/HistoryCard";
 
 import * as S from "./styles";
 import { categories } from "../../utils/categories";
 import { useFocusEffect } from "@react-navigation/native";
+import { addMonths, subMonths, format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export interface ITransaction {
   id: string;
@@ -27,9 +30,20 @@ interface ICategoryData {
 }
 
 export default function Resume() {
+  const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [totalByCategopries, setTotalByCategories] = React.useState<
     ICategoryData[]
   >([]);
+
+  function handleDateChange(action: 'increase' | 'decrease') {
+    if(action === 'increase') {
+      const newDate = addMonths(selectedDate, 1);
+      setSelectedDate(newDate);
+    } else {
+      const newDate = subMonths(selectedDate, 1);
+      setSelectedDate(newDate);
+    }
+  }
 
   async function loadData() {
     const dataKey = "@weFinance:transactions";
@@ -37,7 +51,10 @@ export default function Resume() {
     const formattedResponse = response ? JSON.parse(response) : [];
 
     const expensives = formattedResponse.filter(
-      (expensive: ITransaction) => expensive.type === "negative"
+      (expensive: ITransaction) => 
+        expensive.type === "negative" &&
+        new Date(expensive.data).getMonth() === selectedDate.getMonth() &&
+        new Date(expensive.data).getFullYear() === selectedDate.getFullYear()
     );
 
     const expensivesTotal = expensives.reduce(
@@ -45,10 +62,6 @@ export default function Resume() {
         return accumulator + Number(expensive.amount);
       },
       0
-    );
-    console.log(
-      "🚀 ~ file: Resume.tsx ~ line 47 ~ loadData ~ expensivesTotal",
-      expensivesTotal
     );
 
     const totalByCategory: ICategoryData[] = [];
@@ -84,14 +97,10 @@ export default function Resume() {
     setTotalByCategories(totalByCategory);
   }
 
-  React.useEffect(() => {
-    loadData();
-  }, []);
-
   useFocusEffect(
     React.useCallback(() => {
       loadData();
-    }, [])
+    }, [selectedDate])
   );
 
   return (
@@ -100,7 +109,26 @@ export default function Resume() {
         <S.Title>Resumo</S.Title>
       </S.Header>
 
-      <S.Content>
+      <S.Content
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 24,
+          paddingBottom: useBottomTabBarHeight(),
+        }}
+      >
+        <S.MonthSelect>
+          <S.MonthSelectButton onPress={() => handleDateChange('decrease')}>
+            <S.MonthSelectIcon name="chevron-left"/>
+          </S.MonthSelectButton>
+
+          <S.Month>
+            {format(selectedDate, "MMMM yyyy", {locale: ptBR})}
+          </S.Month>
+
+          <S.MonthSelectButton onPress={() => handleDateChange('increase')}>
+            <S.MonthSelectIcon name="chevron-right"/>
+          </S.MonthSelectButton>
+        </S.MonthSelect>
         <S.ChartContainer>
           <VictoryPie
             data={totalByCategopries}
