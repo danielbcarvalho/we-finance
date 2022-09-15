@@ -17,7 +17,6 @@ export function SignIn() {
     try {
       await signInWithGoogle();
     } catch (error: any) {
-      console.log("🚀 ~ file: SignIn.tsx ~ line 20 ~ handleSignInWithGoogle ~ error", error)
       Alert.alert("Erro ao fazer login", "Tente novamente mais tarde");
     }
   }
