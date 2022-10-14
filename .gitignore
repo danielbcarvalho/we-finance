@@ -55,3 +55,6 @@ web-build/
 dist/
 
 .env
+
+#test
+/coverage
